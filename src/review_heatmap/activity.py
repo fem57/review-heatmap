@@ -179,6 +179,13 @@ class ActivityReporter:
         last_day = forecast[-1][0] if forecast else 0
 
         # Stats: cumulative activity and streaks
+        #
+        # If a daily goal is configured (synced/goal > 0), a day only
+        # contributes to the streak if its activity meets that goal.
+        # A goal of 0 (the default) preserves the original behavior of
+        # counting any day with at least one review.
+
+        goal: int = self._config["synced"]["goal"]
 
         streak_max: int = 0
         streak_cur: int = 0
@@ -189,8 +196,15 @@ class ActivityReporter:
         next_timestamp: Optional[int]
 
         for idx, item in enumerate(history):
-            current += 1
             timestamp, activity = item
+            meets_goal = activity >= goal if goal else True
+
+            if meets_goal:
+                current += 1
+            else:
+                if current > streak_max:
+                    streak_max = current
+                current = 0
 
             try:
                 next_timestamp = history[idx + 1][0]

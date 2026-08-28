@@ -76,6 +76,9 @@ HTML_HEATMAP: str = f"""
             </div>
         </div>
         <div class="alignright">
+            <div class="hm-btn opts-btn" title="Export as image" onclick="reviewHeatmap.onHmExport(event, this);">
+                <img src="{WEB_BASE}/assets/export.svg" />
+            </div>
             <div class="hm-btn opts-btn" title="Options" onclick="reviewHeatmap.onHmOpts(event, this);">
                 <img src="{WEB_BASE}/assets/options.svg" />
             </div>

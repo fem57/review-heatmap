@@ -30,53 +30,50 @@
 # Any modifications to this file must keep this entire header intact.
 
 """
-Initializes add-on components.
+Per-deck heatmap color overrides, set via the deck browser's context menu
 """
 
-from ._version import __version__  # noqa: F401
+from typing import Optional
+
+from aqt.qt import QMenu
+
+from ..config import config, heatmap_colors
 
 
-def initialize_addon():
-    """Initializes add-on after performing a few checks
+def _on_deck_browser_will_show_options_menu(menu: QMenu, deck_id: int):
+    deck_colors = config["synced"]["deckcolors"]
+    current = deck_colors.get(str(deck_id))
 
-    Allows more fine-grained control over add-on execution, which can
-    be helpful when implementing workarounds for Anki bugs (e.g. the module
-    import bug present in all Anki 2.1 versions up to 2.1.14)
-    """
+    submenu = menu.addMenu("Heatmap Color")
 
-    from .consts import ADDON
+    default_action = submenu.addAction("Use default theme")
+    default_action.setCheckable(True)
+    default_action.setChecked(current is None)
+    default_action.triggered.connect(
+        lambda _, deck_id=deck_id: _set_deck_color(deck_id, None)
+    )
 
-    from .libaddon.consts import set_addon_properties
+    submenu.addSeparator()
 
-    set_addon_properties(ADDON)
-
-    from .libaddon.debug import maybeStartDebugging
-
-    maybeStartDebugging()
-
-    from aqt import mw
-
-    if not mw:
-        # TODO: better handling
-        return
-
-    mw.addonManager.setWebExports(__name__, r"web.*")
-
-    from .config import config as config_manager
-    from .gui import initialize_qt_resources
-    from .gui.deckcolors import initialize_deck_colors
-    from .gui.options import initialize_options
-    from .controller import initialize_controller
-    from .views import initialize_views
-    from .finder import initialize_finder
-
-    initialize_qt_resources()
-    initialize_options()
-    initialize_deck_colors()
-
-    controller = initialize_controller(mw, config_manager)
-    initialize_views(controller)
-    initialize_finder()
+    for key, color in heatmap_colors.items():
+        action = submenu.addAction(color["label"])
+        action.setCheckable(True)
+        action.setChecked(current == key)
+        action.triggered.connect(
+            lambda _, deck_id=deck_id, key=key: _set_deck_color(deck_id, key)
+        )
 
 
-initialize_addon()
+def _set_deck_color(deck_id: int, color: Optional[str]):
+    deck_colors = config["synced"]["deckcolors"]
+    if color is None:
+        deck_colors.pop(str(deck_id), None)
+    else:
+        deck_colors[str(deck_id)] = color
+    config.save()
+
+
+def initialize_deck_colors():
+    from aqt.gui_hooks import deck_browser_will_show_options_menu
+
+    deck_browser_will_show_options_menu.append(_on_deck_browser_will_show_options_menu)

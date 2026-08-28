@@ -22,6 +22,18 @@ If you are on an earlier Anki release there is no need to worry: Copying the Ank
 
 ## [Unreleased]
 
+### Added
+
+- New "Weekly Timeline" heatmap mode
+- Optional daily review goal: when set, only days meeting the goal count towards your current/longest streak
+- Per-deck heatmap color overrides, settable from the deck browser's right-click menu
+- Export the currently displayed heatmap as an SVG image
+
+### Fixed
+
+- `rid:` searches triggered by clicking on a heatmap cell no longer fail to combine with other search terms (e.g. `deck:current`)
+- The heatmap could keep querying a closed/stale collection after switching Anki profiles
+
 ## [1.0.1] - 2022-05-24
 
 ### [Download](https://ankiweb.net/shared/info/1771074083)

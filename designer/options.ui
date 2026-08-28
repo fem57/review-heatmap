@@ -584,6 +584,38 @@ access to many exclusive add-ons!</string>
            </property>
           </widget>
          </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_goal">
+           <property name="text">
+            <string>Dail&amp;y goal</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinGoal</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QSpinBox" name="spinGoal">
+           <property name="toolTip">
+            <string>&lt;html&gt;When set, a day only counts towards your current/longest streak if you performed at least this many reviews. Leave at 0 to count any day with review activity, regardless of how many cards were reviewed.&lt;/html&gt;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="specialValueText">
+            <string>No goal</string>
+           </property>
+           <property name="suffix">
+            <string> reviews/day</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>100000</number>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -739,6 +771,7 @@ access to many exclusive add-ons!</string>
   <tabstop>dateLimData</tabstop>
   <tabstop>spinLimHist</tabstop>
   <tabstop>spinLimFcst</tabstop>
+  <tabstop>spinGoal</tabstop>
   <tabstop>cbLimDel</tabstop>
   <tabstop>listDecks</tabstop>
   <tabstop>btnDeckAdd</tabstop>

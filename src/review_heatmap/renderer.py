@@ -159,7 +159,7 @@ class HeatmapRenderer:
         stats_legend = self._stats_legend(dynamic_legend)
         heatmap_legend = self._heatmap_legend(dynamic_legend)
 
-        classes = self._get_css_classes(view)
+        classes = self._get_css_classes(view, current_deck_only)
 
         if prefs["display"][view.name]:
             heatmap = self._generate_heatmap_elm(
@@ -209,15 +209,29 @@ class HeatmapRenderer:
             and (not current_deck_only or cache.deck == self._mw.col.decks.current())
         )
 
-    def _get_css_classes(self, view: HeatmapView) -> List[str]:
+    def _get_css_classes(self, view: HeatmapView, current_deck_only: bool) -> List[str]:
         conf = self._config["synced"]
+        colors = conf["colors"]
+
+        if current_deck_only:
+            override = conf["deckcolors"].get(str(self._current_deck_id()))
+            if override:
+                colors = override
+
         classes = [
             f"{CSS_PLATFORM_PREFIX}-{PLATFORM}",
-            f"{CSS_THEME_PREFIX}-{conf['colors']}",
+            f"{CSS_THEME_PREFIX}-{colors}",
             f"{CSS_MODE_PREFIX}-{conf['mode']}",
             f"{CSS_VIEW_PREFIX}-{view.name}",
         ]
         return classes
+
+    def _current_deck_id(self) -> int:
+        deck_manager = self._mw.col.decks
+        try:
+            return deck_manager.get_current_id()
+        except AttributeError:
+            return deck_manager.selected()
 
     def _generate_heatmap_elm(
         self, report: ActivityReport, dynamic_legend, current_deck_only: bool

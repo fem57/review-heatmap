@@ -69,6 +69,13 @@ heatmap_modes: Dict[str, Dict] = {
         "range": 9,
         "domLabForm": "%b '%y",
     },
+    "weeks": {
+        "label": "Weekly Timeline",
+        "domain": "week",
+        "subDomain": "day",
+        "range": 15,
+        "domLabForm": "%b %d",
+    },
 }
 
 
@@ -82,6 +89,8 @@ config_defaults: Dict[str, Dict] = {
         "limcdel": False,
         "limresched": True,
         "limdecks": [],
+        "goal": 0,
+        "deckcolors": {},
         "version": ADDON.VERSION,
     },
     "profile": {

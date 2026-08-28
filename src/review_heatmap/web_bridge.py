@@ -44,6 +44,7 @@ from aqt.stats import DeckStats
 
 from .config import heatmap_colors, heatmap_modes
 from .gui.contrib import invoke_contributions_dialog
+from .gui.export import invoke_export_heatmap
 from .gui.extra import invoke_snanki
 from .gui.options import invoke_options_dialog
 
@@ -186,6 +187,13 @@ class _CommandHandler:
     def invoke_snanki(self, payload: Any, context: SUPPORTED_CONTEXT_TYPES) -> None:
         parent = self._get_context_parent(context)
         invoke_snanki(parent=parent)
+
+    @_register_command_handler("export")
+    def export_heatmap(self, payload: Optional[str], context: SUPPORTED_CONTEXT_TYPES) -> None:
+        if not payload:
+            return
+        parent = self._get_context_parent(context)
+        invoke_export_heatmap(payload, parent=parent)
 
     # Helpers
 

@@ -42,10 +42,6 @@ if TYPE_CHECKING:
     from aqt.browser.table import SearchContext
 
 
-# FIXME: No longer works in combination with other search specifiers
-# e.g. deck:current, which we actually add in the overview view
-
-
 def _find_cards_reviewed_between(start_date: int, end_date: int) -> List[int]:
     # select from cards instead of just selecting uniques from revlog
     # in order to exclude deleted cards
@@ -57,11 +53,11 @@ def _find_cards_reviewed_between(start_date: int, end_date: int) -> List[int]:
     )
 
 
-_re_rid = re.compile(r"^rid:([0-9]+):([0-9]+)$")
+_re_rid = re.compile(r"rid:([0-9]+):([0-9]+)")
 
 
 def find_rid(search: str) -> Optional[List[int]]:
-    match = _re_rid.match(search)
+    match = _re_rid.search(search)
 
     if not match:
         return None
@@ -74,18 +70,17 @@ def find_rid(search: str) -> Optional[List[int]]:
 
 def on_browser_will_search(search_context: "SearchContext"):
     search = search_context.search
-    if search.startswith("rid"):
-        found_ids = find_rid(search)
-    else:
-        return
+    found_ids = find_rid(search)
 
     if found_ids is None:
         return
 
-    if hasattr(search_context, "card_ids"):
-        search_context.card_ids = found_ids  # type: ignore[attr-defined]
-    else:
-        search_context.ids = found_ids  # type: ignore[assignment]
+    # Replace just the rid:x:y token with an equivalent cid: filter instead
+    # of overwriting the entire search. This keeps the rid: filter
+    # composable with any other search terms it's combined with, e.g. the
+    # "deck:current rid:x:y" query used by the deck overview heatmap.
+    cid_filter = "cid:" + ",".join(str(cid) for cid in found_ids) if found_ids else "cid:0"
+    search_context.search = _re_rid.sub(cid_filter, search)
 
 
 # HOOKS

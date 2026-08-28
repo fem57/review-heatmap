@@ -4,6 +4,7 @@ The following icons were either based off of public domain works or designed fro
 
 - circle.svg
 - down.svg
+- export.svg
 - left.svg
 - right.svg
 - options.svg

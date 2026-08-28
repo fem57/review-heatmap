@@ -257,6 +257,17 @@ class ReviewHeatmap {
       bridgeCommand("revhm_contrib");
     }
   }
+
+  public onHmExport(event: MouseEvent, button): void {
+    const svgElement = document.querySelector("#cal-heatmap svg");
+
+    if (!svgElement) {
+      return;
+    }
+
+    const serialized = new XMLSerializer().serializeToString(svgElement);
+    bridgeCommand("revhm_export:" + encodeURIComponent(serialized));
+  }
 }
 
 // return "zero"-ed local datetime (workaround for lack of UTC time support

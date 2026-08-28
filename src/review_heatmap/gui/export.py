@@ -30,53 +30,33 @@
 # Any modifications to this file must keep this entire header intact.
 
 """
-Initializes add-on components.
+Exports the currently rendered heatmap to an SVG file
 """
 
-from ._version import __version__  # noqa: F401
+from typing import Optional
+from urllib.parse import unquote
+
+from aqt.qt import QFileDialog, QWidget
+from aqt.utils import showWarning, tooltip
 
 
-def initialize_addon():
-    """Initializes add-on after performing a few checks
+def invoke_export_heatmap(svg_payload: str, parent: Optional[QWidget] = None) -> None:
+    svg_content = unquote(svg_payload)
 
-    Allows more fine-grained control over add-on execution, which can
-    be helpful when implementing workarounds for Anki bugs (e.g. the module
-    import bug present in all Anki 2.1 versions up to 2.1.14)
-    """
-
-    from .consts import ADDON
-
-    from .libaddon.consts import set_addon_properties
-
-    set_addon_properties(ADDON)
-
-    from .libaddon.debug import maybeStartDebugging
-
-    maybeStartDebugging()
-
-    from aqt import mw
-
-    if not mw:
-        # TODO: better handling
+    path, _ = QFileDialog.getSaveFileName(
+        parent, "Export Heatmap", "review-heatmap.svg", "SVG images (*.svg)"
+    )
+    if not path:
         return
 
-    mw.addonManager.setWebExports(__name__, r"web.*")
+    if not path.lower().endswith(".svg"):
+        path += ".svg"
 
-    from .config import config as config_manager
-    from .gui import initialize_qt_resources
-    from .gui.deckcolors import initialize_deck_colors
-    from .gui.options import initialize_options
-    from .controller import initialize_controller
-    from .views import initialize_views
-    from .finder import initialize_finder
+    try:
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(svg_content)
+    except OSError as exc:
+        showWarning(f"Could not save heatmap: {exc}", parent=parent)
+        return
 
-    initialize_qt_resources()
-    initialize_options()
-    initialize_deck_colors()
-
-    controller = initialize_controller(mw, config_manager)
-    initialize_views(controller)
-    initialize_finder()
-
-
-initialize_addon()
+    tooltip("Heatmap exported successfully.", parent=parent)

@@ -30,7 +30,7 @@ Any modifications to this file must keep this entire header intact.
 */
 
 export interface ReviewHeatmapOptions {
-  domain: "year" | "month";
+  domain: "year" | "month" | "week";
   subdomain: "day";
   range: number;
   domLabForm: string;

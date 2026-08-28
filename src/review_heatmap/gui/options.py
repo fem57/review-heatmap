@@ -85,6 +85,7 @@ class RevHmOptions(OptionsDialog):
                 ("max", {"setter": "_setDateLimDataMax"}),
             ),
         ),
+        ("form.spinGoal", (("value", {"dataPath": "synced/goal"}),)),
         ("form.cbLimDel", (("value", {"dataPath": "synced/limcdel"}),)),
         ("form.cbLimResched", (("value", {"dataPath": "synced/limresched"}),)),
         (
