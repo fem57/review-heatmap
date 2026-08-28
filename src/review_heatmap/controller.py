@@ -54,6 +54,7 @@ class HeatmapController:
         self._bridge: Optional[HeatmapBridge] = HeatmapBridge(self._mw, self._config)
         self._bridge.register()
 
+        self._reporter: Optional[ActivityReporter] = None
         self._renderer: Optional[HeatmapRenderer] = None
 
     def render_for_view(
@@ -67,12 +68,17 @@ class HeatmapController:
         if not col:
             raise CollectionError("Anki collection and/or database is not ready")
 
-        if not self._renderer:
-            reporter = ActivityReporter(col, self._config)
-            self._renderer = HeatmapRenderer(self._mw, reporter, self._config)
+        if not self._reporter:
+            self._reporter = ActivityReporter(col, self._config)
         else:
-            pass
-            # self._renderer.set_activity_reporter(reporter)
+            # Rebind to the current collection: mw.col is replaced with a new
+            # Collection instance on every profile switch, so a reporter
+            # cached from a previous profile would otherwise keep querying
+            # a closed/stale database.
+            self._reporter.set_collection(col)
+
+        if not self._renderer:
+            self._renderer = HeatmapRenderer(self._mw, self._reporter, self._config)
 
         return self._renderer.render(view, limhist, limfcst, current_deck_only)
 
