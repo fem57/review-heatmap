@@ -41,7 +41,7 @@ from ..config import config, heatmap_colors
 
 
 def _on_deck_browser_will_show_options_menu(menu: QMenu, deck_id: int):
-    deck_colors = config["synced"]["deckcolors"]
+    deck_colors = config["synced"].setdefault("deckcolors", {})
     current = deck_colors.get(str(deck_id))
 
     submenu = menu.addMenu("Heatmap Color")
@@ -65,7 +65,7 @@ def _on_deck_browser_will_show_options_menu(menu: QMenu, deck_id: int):
 
 
 def _set_deck_color(deck_id: int, color: Optional[str]):
-    deck_colors = config["synced"]["deckcolors"]
+    deck_colors = config["synced"].setdefault("deckcolors", {})
     if color is None:
         deck_colors.pop(str(deck_id), None)
     else:

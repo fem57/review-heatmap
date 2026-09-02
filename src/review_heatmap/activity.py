@@ -185,7 +185,7 @@ class ActivityReporter:
         # A goal of 0 (the default) preserves the original behavior of
         # counting any day with at least one review.
 
-        goal: int = self._config["synced"]["goal"]
+        goal: int = self._config["synced"].get("goal", 0)
 
         streak_max: int = 0
         streak_cur: int = 0

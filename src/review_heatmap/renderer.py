@@ -214,7 +214,7 @@ class HeatmapRenderer:
         colors = conf["colors"]
 
         if current_deck_only:
-            override = conf["deckcolors"].get(str(self._current_deck_id()))
+            override = conf.get("deckcolors", {}).get(str(self._current_deck_id()))
             if override:
                 colors = override
 
