@@ -466,5 +466,22 @@ select.hm-sel:active, select.hm-sel:focus {
 .night_mode .rh-theme-flame .rh-col20{color: #ffeda0}
 
 
+/* Weekly Timeline (calendar-row) view */
+/* ################################################################### */
+
+.week-rows-graph rect.hover_cursor:hover {
+    stroke: #000;
+    stroke-width: 1px;
+}
+.night_mode .week-rows-graph rect.hover_cursor:hover {
+    stroke: #fff;
+}
+.week-rows-outside-range {
+    opacity: 0.35;
+}
+.week-rows-row-label.current {
+    font-weight: bold;
+}
+
 /* Platform-specific adjustments / workarounds */
 /* ################################################################### */

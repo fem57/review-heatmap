@@ -71,15 +71,19 @@ heatmap_modes: Dict[str, Dict] = {
     },
     "weeks": {
         "label": "Weekly Timeline",
+        # "week" is a marker the frontend checks to route this mode to its
+        # own hand-rolled calendar-row renderer instead of cal-heatmap:
+        # cal-heatmap's domain/subDomain model can only stack a week's days
+        # vertically in a single narrow column, never lay them out
+        # left-to-right as an actual calendar row. subDomain/range/
+        # domLabForm below are unused by that renderer but kept so the
+        # options blob sent to the frontend has the same shape as the
+        # other modes; range instead sets how many week-rows are shown
+        # per page (kept small since each row now takes real vertical
+        # space, unlike a 10px-wide cal-heatmap column).
         "domain": "week",
         "subDomain": "day",
-        "range": 15,
-        # A "week" domain column is only as wide as a single day cell (its
-        # 7 day-subdomain cells stack vertically, unlike the "month" domain
-        # which spreads them across a grid), so there's no room for a date
-        # label without it overlapping its neighbors. Suppress it entirely;
-        # cal-heatmap treats "" as "no domain label" and the per-day
-        # tooltip still shows the exact date on hover.
+        "range": 8,
         "domLabForm": "",
     },
 }
