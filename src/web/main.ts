@@ -116,6 +116,40 @@ class ReviewHeatmap {
     // console.log("Date: calTodayDate "+ calTodayDate)
     // console.log("Date: Date() "+ new Date())
 
+    // A "week" domain column is only as wide as a single day cell, so a
+    // full date label ("Aug 30") on every single week overlaps its
+    // neighbors. But showing nothing at all leaves the view with no date
+    // context whatsoever. Compromise: show a compact month abbreviation,
+    // but only on the first week of each month, so labels never crowd
+    // each other while you can still tell where you are in the timeline.
+    let domainLabelFormat: string | ((d: Date) => string) = this.options
+      .domLabForm;
+    if (this.options.domain === "week") {
+      const monthAbbreviations = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      let lastLabeledMonth: number | null = null;
+      domainLabelFormat = (d: Date): string => {
+        const month = d.getMonth();
+        if (month === lastLabeledMonth) {
+          return "";
+        }
+        lastLabeledMonth = month;
+        return monthAbbreviations[month];
+      };
+    }
+
     heatmap.init({
       domain: this.options.domain,
       subDomain: this.options.subdomain,
@@ -132,7 +166,7 @@ class ReviewHeatmap {
       start: calStartDate,
       legend: this.options.legend,
       displayLegend: false,
-      domainLabelFormat: this.options.domLabForm,
+      domainLabelFormat: domainLabelFormat,
       tooltip: true,
       subDomainTitleFormat: (
         isEmpty: boolean,
