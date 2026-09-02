@@ -74,7 +74,13 @@ heatmap_modes: Dict[str, Dict] = {
         "domain": "week",
         "subDomain": "day",
         "range": 15,
-        "domLabForm": "%b %d",
+        # A "week" domain column is only as wide as a single day cell (its
+        # 7 day-subdomain cells stack vertically, unlike the "month" domain
+        # which spreads them across a grid), so there's no room for a date
+        # label without it overlapping its neighbors. Suppress it entirely;
+        # cal-heatmap treats "" as "no domain label" and the per-day
+        # tooltip still shows the exact date on hover.
+        "domLabForm": "",
     },
 }
 

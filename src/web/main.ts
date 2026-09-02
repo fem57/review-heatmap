@@ -84,6 +84,30 @@ class ReviewHeatmap {
       if (tempDate.getTime() > calMaxDate.getTime()) {
         calMaxDate = tempDate;
       }
+    } else if (this.options.domain === "week") {
+      // Same centering as month view above, just in units of weeks instead
+      // of months. Without this the heatmap defaults to starting at today
+      // and only extending forward, showing almost nothing but empty
+      // future weeks instead of a mix of past history and near-future
+      // forecast around today.
+      let padding = this.options.range / 2;
+      let paddingLower = Math.round(padding - 1);
+      let paddingUpper = Math.round(padding + 1);
+
+      calStartDate.setDate(calStartDate.getDate() - paddingLower * 7);
+      calStartDate.setDate(calStartDate.getDate() - calStartDate.getDay());
+
+      if (calMinDate.getTime() > calStartDate.getTime()) {
+        calStartDate = calMinDate;
+      }
+
+      let tempDate = new Date(calTodayDate);
+      tempDate.setDate(tempDate.getDate() + paddingUpper * 7);
+      tempDate.setDate(tempDate.getDate() - tempDate.getDay());
+
+      if (tempDate.getTime() > calMaxDate.getTime()) {
+        calMaxDate = tempDate;
+      }
     }
 
     let heatmap = new CalHeatMap();
