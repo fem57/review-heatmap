@@ -384,7 +384,14 @@ class ReviewHeatmap {
           (rangeStart === null || ts >= rangeStart.getTime()) &&
           (rangeStop === null || ts <= rangeStop.getTime());
 
-        const rawValue = (state.data as { [key: number]: unknown })[ts];
+        // The data dict's keys are plain unix epoch *seconds* (the
+        // convention cal-heatmap's own data-loading expects, see
+        // tzOffsetByTimestamp below), while ts here is milliseconds like
+        // options.today/start/stop -- convert before looking anything up,
+        // or every lookup silently misses.
+        const rawValue = (state.data as { [key: number]: unknown })[
+          Math.round(ts / 1000)
+        ];
         const value = (Array.isArray(rawValue) ? rawValue[0] : rawValue) as
           | number
           | undefined;
